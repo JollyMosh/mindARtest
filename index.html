@@ -4,20 +4,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+    
+    <script>
+      // Componente personalizado para manejar la reproducción de sonido al hacer clic
+      AFRAME.registerComponent('play-sound-on-click', {
+        schema: {
+          sound: { type: 'selector' }
+        },
+        init: function () {
+          const soundEl = this.data.sound;
+          this.el.addEventListener('click', () => {
+            if (soundEl) {
+              soundEl.currentTime = 0; // Reinicia el audio si ya estaba sonando
+              soundEl.play().catch(error => console.log("Error al reproducir audio:", error));
+            }
+          });
+        }
+      });
+    </script>
+
   </head>
   <body>
-    <a-scene mindar-image="imageTargetSrc: ./markerc.mind;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+
+    <a-scene mindar-image="imageTargetSrc: ./markers.mind; maxTrack: 2" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+      
       <a-assets>
-        
-        <a-asset-item id="avatarModel" src="./scene.gltf"></a-asset-item>
+        <a-asset-item id="Miku" src="./Miku/scene.gltf"></a-asset-item>
+        <a-asset-item id="Teto" src="./scene.gltf"></a-asset-item>
+
+        <audio id="audio-miku" src="./Miku/miku_dayo.mp3" preload="auto"></audio>
+        <audio id="audio-teto" src="./teto.mp3" preload="auto"></audio>
+
       </a-assets>
 
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+<!-- Modelos -->
+
       <a-entity mindar-image-target="targetIndex: 0">
-        
-        <a-gltf-model rotation="0 0 0 " position="0 0 0.1" scale="0.05 0.05 0.05" src="#avatarModel" animation="property: position; to: 0 0.1 0.1; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate"></a-gltf-model>
+        <a-gltf-model class="clickable" rotation="0 0 0 " position="0 0 0.1" scale="0.05 0.05 0.05" src="#Miku" animation="property: position; to: 0 0.1 0.1; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate"play-sound-on-click="sound: #audio-miku"></a-gltf-model>
       </a-entity>
+      
+      <a-entity mindar-image-target="targetIndex: 1">
+        <a-gltf-model class="clickable" rotation="0 0 0 " position="0 0 0.1" scale="0.05 0.05 0.05" src="#Teto" animation="property: position; to: 0 0.1 0.1; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate"play-sound-on-click="sound: #audio-teto"></a-gltf-model>
+      </a-entity>
+    
     </a-scene>
+
   </body>
 </html>
-
