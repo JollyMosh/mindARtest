@@ -1,80 +1,99 @@
+<!DOCTYPE html>
 <html>
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
-    
-    <script>
-      // Componente personalizado para reproducir audio al hacer clic en un objeto 3D
-      AFRAME.registerComponent('play-sound-on-click', {
-        schema: {
-          audioId: { type: 'string' }
-        },
-        init: function () {
-          const soundEl = document.querySelector(this.data.audioId);
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-          this.el.addEventListener('click', () => {
-            if (soundEl) {
-              soundEl.currentTime = 0; // Reinicia si ya estaba sonando
-              soundEl.play().catch(error => {
-                console.log("Error al reproducir audio:", error);
-              });
-            }
-          });
-        }
+  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+</head>
+
+<body>
+
+  <a-scene
+    mindar-image="imageTargetSrc: ./markers.mind; maxTrack: 2"
+    color-space="sRGB"
+    renderer="colorManagement: true, physicallyCorrectLights"
+    vr-mode-ui="enabled: false"
+    device-orientation-permission-ui="enabled: false">
+
+    <a-assets>
+      <a-asset-item
+        id="Miku"
+        src="./Miku/scene.gltf">
+      </a-asset-item>
+
+      <a-asset-item
+        id="Teto"
+        src="./scene.gltf">
+      </a-asset-item>
+    </a-assets>
+
+    <a-camera
+      position="0 0 0"
+      look-controls="enabled: false"
+      cursor="fuse: false; rayOrigin: mouse"
+      raycaster="far: 100; objects: .clickable">
+    </a-camera>
+
+    <!-- Miku -->
+    <a-entity mindar-image-target="targetIndex: 0">
+      <a-gltf-model
+        id="Miku-plush"
+        class="clickable"
+        rotation="0 0 0"
+        position="0 0 0.1"
+        scale="1 1 1"
+        src="#Miku"
+        animation="property: position; to: 0 0.1 0.1; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate">
+      </a-gltf-model>
+    </a-entity>
+
+    <!-- Teto -->
+    <a-entity mindar-image-target="targetIndex: 1">
+      <a-gltf-model
+        id="Teto-plush"
+        class="clickable"
+        rotation="0 0 0"
+        position="0 0 0.1"
+        scale="0.05 0.05 0.05"
+        src="#Teto"
+        animation="property: position; to: 0 0.1 0.1; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate">
+      </a-gltf-model>
+    </a-entity>
+
+  </a-scene>
+
+
+  <script>
+    // Los elementos ya existen porque el script está
+    // después del <a-scene>
+
+    const MikuPlush = document.querySelector('#Miku-plush');
+    const TetoPlush = document.querySelector('#Teto-plush');
+
+    const audioMiku = new Audio('./Miku/miku_dayo.mp3');
+    const audioTeto = new Audio('./teto.mp3');
+
+    MikuPlush.addEventListener('click', () => {
+      console.log('Click en Miku');
+
+      audioMiku.currentTime = 0;
+
+      audioMiku.play().catch(error => {
+        console.error('Error reproduciendo audio de Miku:', error);
       });
-    </script>
-  </head>
-  <body>
+    });
 
-    <a-scene 
-      mindar-image="imageTargetSrc: ./markers.mind; maxTrack: 2" 
-      color-space="sRGB" 
-      renderer="colorManagement: true, physicallyCorrectLights" 
-      vr-mode-ui="enabled: false" 
-      device-orientation-permission-ui="enabled: false">
-      
-      <a-assets>
-        <a-asset-item id="Miku" src="./Miku/scene.gltf"></a-asset-item>
-        <a-asset-item id="Teto" src="./scene.gltf"></a-asset-item>
+    TetoPlush.addEventListener('click', () => {
+      console.log('Click en Teto');
 
-        <!-- Etiqueta de audio nativa dentro de los assets de A-Frame -->
-        <audio id="audio-miku" src="./Miku/miku_dayo.mp3" preload="auto"></audio>
-        <audio id="audio-teto" src="./teto.mp3" preload="auto"></audio>
-      </a-assets>
+      audioTeto.currentTime = 0;
 
-      <!-- Raycaster corregido con far: 10000 -->
-      <a-camera position="0 0 0" look-controls="enabled: false" cursor="fuse: false; rayOrigin: mouse;" raycaster="far: 10000; objects: .clickable"></a-camera>
+      audioTeto.play().catch(error => {
+        console.error('Error reproduciendo audio de Teto:', error);
+      });
+    });
+  </script>
 
-      <!-- Modelo Miku con el componente asignado -->
-      <a-entity mindar-image-target="targetIndex: 0">
-        <a-gltf-model 
-          id="Miku-plush" 
-          class="clickable" 
-          play-sound-on-click="audioId: #audio-miku"
-          rotation="0 0 0" 
-          position="0 0 0.1" 
-          scale="1 1 1" 
-          src="#Miku" 
-          animation="property: position; to: 0 0.1 0.1; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate">
-        </a-gltf-model>
-      </a-entity>
-      
-      <!-- Modelo Teto con el componente asignado -->
-      <a-entity mindar-image-target="targetIndex: 1">
-        <a-gltf-model 
-          id="Teto-plush" 
-          class="clickable" 
-          play-sound-on-click="audioId: #audio-teto"
-          rotation="0 0 0" 
-          position="0 0 0.1" 
-          scale="0.05 0.05 0.05" 
-          src="#Teto" 
-          animation="property: position; to: 0 0.1 0.1; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate">
-        </a-gltf-model>
-      </a-entity>
-    
-    </a-scene>
-
-  </body>
+</body>
 </html>
