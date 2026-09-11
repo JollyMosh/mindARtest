@@ -1,68 +1,100 @@
-<!DOCTYPE html> <html> <head> <meta name="viewport" content="width=device-width, initial-scale=1" /> <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script> <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script> </head> <body>
-<a-scene mindar-image="imageTargetSrc: ./markers.mind; maxTrack: 2" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<a-assets>
-  <a-asset-item
-    id="Miku"
-    src="./Miku/scene.gltf">
-  </a-asset-item>
+  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+</head>
 
-  <a-asset-item
-    id="Teto"
-    src="./scene.gltf">
-  </a-asset-item>
-</a-assets>
+<body>
+
+  <a-scene
+    mindar-image="imageTargetSrc: ./markers.mind; maxTrack: 2"
+    color-space="sRGB"
+    renderer="colorManagement: true, physicallyCorrectLights"
+    vr-mode-ui="enabled: false"
+    device-orientation-permission-ui="enabled: false">
+
+    <a-assets>
+      <a-asset-item
+        id="Miku"
+        src="./Miku/scene.gltf">
+      </a-asset-item>
+
+      <a-asset-item
+        id="Teto"
+        src="./scene.gltf">
+      </a-asset-item>
+    </a-assets>
+
+    <a-camera
+      position="0 0 0"
+      look-controls="enabled: false"
+      cursor="fuse: false; rayOrigin: mouse"
+      raycaster="far: 100; objects: .clickable">
+    </a-camera>
+
+    <!-- Miku -->
+    <a-entity mindar-image-target="targetIndex: 0">
+      <a-gltf-model
+        id="Miku-plush"
+        class="clickable"
+        rotation="0 0 0"
+        position="0 0 0.1"
+        scale="1 1 1"
+        src="#Miku"
+        animation="property: position; to: 0 0.1 0.1; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate">
+      </a-gltf-model>
+    </a-entity>
+
+    <!-- Teto -->
+    <a-entity mindar-image-target="targetIndex: 1">
+      <a-gltf-model
+        id="Teto-plush"
+        class="clickable"
+        rotation="0 0 0"
+        position="0 0 0.1"
+        scale="0.05 0.05 0.05"
+        src="#Teto"
+        animation="property: position; to: 0 0.1 0.1; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate">
+      </a-gltf-model>
+    </a-entity>
+
+  </a-scene>
 
 
-<!-- IMPORTANTE:
-     cursor + raycaster -->
-<a-camera
-  position="0 0 0"
-  look-controls="enabled: false"
-  cursor="rayOrigin: mouse"
-  raycaster="objects: .clickable; far: 100">
-</a-camera>
+  <script>
+    // Los elementos ya existen porque el script está
+    // después del <a-scene>
+    document.addEventListener('touchstart', function () { alert('¡EL CELULAR DETECTÓ EL TOQUE!'); }, { once: true }); 
 
+    const MikuPlush = document.querySelector('#Miku-plush');
+    const TetoPlush = document.querySelector('#Teto-plush');
 
-<!-- Miku -->
-<a-entity mindar-image-target="targetIndex: 0">
+    const audioMiku = new Audio('./Miku/miku_dayo.mp3');
+    const audioTeto = new Audio('./teto.mp3');
 
-  <a-gltf-model
-    id="Miku-plush"
-    class="clickable"
-    rotation="0 0 0"
-    position="0 0 0.1"
-    scale="1 1 1"
-    src="#Miku"
-    animation="property: position;
-               to: 0 0.1 0.1;
-               dur: 1000;
-               easing: easeInOutQuad;
-               loop: true;
-               dir: alternate">
-  </a-gltf-model>
+    MikuPlush.addEventListener('click', () => {
+      console.log('Click en Miku');
 
-</a-entity>
+      audioMiku.currentTime = 0;
 
+      audioMiku.play().catch(error => {
+        console.error('Error reproduciendo audio de Miku:', error);
+      });
+    });
 
-<!-- Teto -->
-<a-entity mindar-image-target="targetIndex: 1">
+    TetoPlush.addEventListener('click', () => {
+      console.log('Click en Teto');
 
-  <a-gltf-model
-    id="Teto-plush"
-    class="clickable"
-    rotation="0 0 0"
-    position="0 0 0.1"
-    scale="0.05 0.05 0.05"
-    src="#Teto"
-    animation="property: position;
-               to: 0 0.1 0.1;
-               dur: 1000;
-               easing: easeInOutQuad;
-               loop: true;
-               dir: alternate">
-  </a-gltf-model>
+      audioTeto.currentTime = 0;
 
-</a-entity>
+      audioTeto.play().catch(error => {
+        console.error('Error reproduciendo audio de Teto:', error);
+      });
+    });
+  </script>
 
-</a-scene> <script> const MikuPlush = document.querySelector('#Miku-plush'); const TetoPlush = document.querySelector('#Teto-plush'); const audioMiku = new Audio('./Miku/miku_dayo.mp3'); const audioTeto = new Audio('./teto.mp3'); // ========================================== // MIKU // ========================================== MikuPlush.addEventListener('click', () => { console.log('CLICK DETECTADO: Miku'); audioMiku.currentTime = 0; audioMiku.play() .then(() => { console.log('Audio de Miku reproduciéndose'); }) .catch(error => { console.error('Error reproduciendo Miku:', error); }); }); // ========================================== // TETO // ========================================== TetoPlush.addEventListener('click', () => { console.log('CLICK DETECTADO: Teto'); audioTeto.currentTime = 0; audioTeto.play() .then(() => { console.log('Audio de Teto reproduciéndose'); }) .catch(error => { console.error('Error reproduciendo Teto:', error); }); }); // ========================================== // DEBUG // ========================================== console.log('Miku:', MikuPlush); console.log('Teto:', TetoPlush); </script> </body> </html>
+</body>
+</html>
