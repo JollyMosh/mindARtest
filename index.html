@@ -51,6 +51,40 @@
         src="#Miku"
         animation="property: position; to: 0 0.1 0.1; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate">
       </a-gltf-model>
+      <script>
+
+    document.addEventListener('DOMContentLoaded', () => {
+
+      const MikuPlush = document.querySelector('#Miku-plush');
+      
+
+      const audioMiku = document.querySelector('#audioMiku');
+      
+
+
+      // ==========================================
+      // MIKU
+      // ==========================================
+
+      MikuPlush.addEventListener('click', () => {
+
+        console.log('CLICK EN MIKU');
+
+        audioMiku.pause();
+        audioMiku.currentTime = 0;
+
+        audioMiku.play().catch(error => {
+          console.error('Error reproduciendo Miku:', error);
+        });
+
+      });
+
+
+      console.log('Eventos de Miku y Teto registrados');
+
+    });
+
+  </script>
 
     </a-entity>
 
@@ -72,58 +106,7 @@
   </a-scene>
 
 
-  <script>
-
-    document.addEventListener('DOMContentLoaded', () => {
-
-      const MikuPlush = document.querySelector('#Miku-plush');
-      const TetoPlush = document.querySelector('#Teto-plush');
-
-      const audioMiku = document.querySelector('#audioMiku');
-      const audioTeto = document.querySelector('#audioTeto');
-
-
-      // ==========================================
-      // MIKU
-      // ==========================================
-
-      MikuPlush.addEventListener('click', () => {
-
-        console.log('CLICK EN MIKU');
-
-        audioMiku.pause();
-        audioMiku.currentTime = 0;
-
-        audioMiku.play().catch(error => {
-          console.error('Error reproduciendo Miku:', error);
-        });
-
-      });
-
-
-      // ==========================================
-      // TETO
-      // ==========================================
-
-      TetoPlush.addEventListener('click', () => {
-
-        console.log('CLICK EN TETO');
-
-        audioTeto.pause();
-        audioTeto.currentTime = 0;
-
-        audioTeto.play().catch(error => {
-          console.error('Error reproduciendo Teto:', error);
-        });
-
-      });
-
-
-      console.log('Eventos de Miku y Teto registrados');
-
-    });
-
-  </script>
+  
 
 </body>
 </html>
