@@ -17,6 +17,7 @@
     device-orientation-permission-ui="enabled: false">
 
     <a-assets>
+
       <a-asset-item
         id="Miku"
         src="./Miku/scene.gltf">
@@ -27,19 +28,30 @@
         src="./scene.gltf">
       </a-asset-item>
 
-      <!-- Precargamos los audios -->
-      <audio id="audioMiku" src="./Miku/miku_dayo.mp3" preload="auto"></audio>
-      <audio id="audioTeto" src="./teto.mp3" preload="auto"></audio>
+      <audio
+        id="audioMiku"
+        src="./Miku/miku_dayo.mp3"
+        preload="auto">
+      </audio>
+
+      <audio
+        id="audioTeto"
+        src="./teto.mp3"
+        preload="auto">
+      </audio>
+
     </a-assets>
 
     <a-camera
       position="0 0 0"
-      look-controls="enabled: false"
-      cursor="rayOrigin: mouse"
-      raycaster="far: 100; objects: .clickable">
+      look-controls="enabled: false">
     </a-camera>
 
-    <!-- Miku -->
+
+    <!-- ========================= -->
+    <!-- MIKU -->
+    <!-- ========================= -->
+
     <a-entity mindar-image-target="targetIndex: 0">
 
       <a-gltf-model
@@ -54,7 +66,11 @@
 
     </a-entity>
 
-    <!-- Teto -->
+
+    <!-- ========================= -->
+    <!-- TETO -->
+    <!-- ========================= -->
+
     <a-entity mindar-image-target="targetIndex: 1">
 
       <a-gltf-model
@@ -71,43 +87,149 @@
 
   </a-scene>
 
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
 
-    const scene = document.querySelector('a-scene');
+  <script>
 
-    scene.addEventListener('loaded', () => {
+    document.addEventListener('DOMContentLoaded', function () {
 
-      const MikuPlush = document.querySelector('#Miku-plush');
-      const audioMiku = document.querySelector('#audioMiku');
+      const scene = document.querySelector('a-scene');
 
-      console.log('Miku:', MikuPlush);
-      console.log('Audio Miku:', audioMiku);
 
-      MikuPlush.addEventListener('click', () => {
-        alert('¡TOUCH FUNCIONA!');
-        console.log('CLICK EN MIKU');
+      function iniciar() {
 
-        audioMiku.pause();
-        audioMiku.currentTime = 0;
+        console.log('A-FRAME LISTO');
 
-        audioMiku.play()
-          .then(() => {
-            console.log('Audio de Miku reproduciéndose');
-          })
-          .catch(error => {
-            console.error('Error reproduciendo Miku:', error);
+        const MikuPlush = document.querySelector('#Miku-plush');
+        const audioMiku = document.querySelector('#audioMiku');
+
+        console.log('Miku:', MikuPlush);
+        console.log('Audio:', audioMiku);
+
+
+        // ==========================================
+        // ESPERAR A QUE EL MODELO 3D ESTÉ LISTO
+        // ==========================================
+
+        MikuPlush.addEventListener('model-loaded', function () {
+
+          console.log('MODELO DE MIKU CARGADO');
+
+        });
+
+
+        // ==========================================
+        // TOUCH DIRECTO SOBRE LA PANTALLA
+        // ==========================================
+
+        scene.addEventListener('touchstart', function (event) {
+
+          console.log('TOUCH EN LA ESCENA');
+
+          const touch = event.touches[0];
+
+          const rect = scene.canvas.getBoundingClientRect();
+
+          // Convertimos la posición del dedo a coordenadas -1 a 1
+          const mouse = new THREE.Vector2();
+
+          mouse.x =
+            ((touch.clientX - rect.left) / rect.width) * 2 - 1;
+
+          mouse.y =
+            -((touch.clientY - rect.top) / rect.height) * 2 + 1;
+
+
+          // ==========================================
+          // RAYCASTER
+          // ==========================================
+
+          const camera = scene.camera;
+
+          const raycaster = new THREE.Raycaster();
+
+          raycaster.setFromCamera(mouse, camera);
+
+
+          // Buscamos los objetos 3D de Miku
+          const objetosMiku = [];
+
+          MikuPlush.object3D.traverse(function (obj) {
+
+            if (obj.isMesh) {
+              objetosMiku.push(obj);
+            }
+
           });
 
-      });
 
-      console.log('Evento de Miku registrado');
+          const intersecciones =
+            raycaster.intersectObjects(objetosMiku, true);
+
+
+          console.log(
+            'Objetos tocados:',
+            intersecciones.length
+          );
+
+
+          // ==========================================
+          // SI TOCÓ MIKU
+          // ==========================================
+
+          if (intersecciones.length > 0) {
+
+            alert('¡TOCASTE A MIKU!');
+
+            console.log('CLICK EN MIKU');
+
+
+            audioMiku.pause();
+
+            audioMiku.currentTime = 0;
+
+
+            audioMiku.play()
+              .then(function () {
+
+                console.log(
+                  'AUDIO DE MIKU REPRODUCIÉNDOSE'
+                );
+
+              })
+              .catch(function (error) {
+
+                console.error(
+                  'ERROR REPRODUCIENDO MIKU:',
+                  error
+                );
+
+              });
+
+          }
+
+        });
+
+
+        console.log('EVENTO TOUCH REGISTRADO');
+
+      }
+
+
+      // Si A-Frame todavía no terminó de cargar
+      if (!scene.hasLoaded) {
+
+        scene.addEventListener('loaded', iniciar);
+
+      } else {
+
+        // Si ya cargó antes de que llegáramos aquí
+        iniciar();
+
+      }
 
     });
 
-  });
-</script>
-  
+  </script>
 
 </body>
 </html>
