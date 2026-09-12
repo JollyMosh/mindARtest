@@ -1241,7 +1241,7 @@
 		{
 			"mimeType":"image/png",
 			"name":"Material.003_baseColor",
-			"uri":"Material_003_baseColor.png"
+			"uri": "https://raw.githubusercontent.com/JollyMosh/mindARtest/96cb4e52f9aedb10afb0a4c0617ba1329c8c573e/Material.003_baseColor.png"
 		}
 	],
 	"accessors":[
