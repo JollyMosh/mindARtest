@@ -51,40 +51,6 @@
         src="#Miku"
         animation="property: position; to: 0 0.1 0.1; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate">
       </a-gltf-model>
-      <script>
-    document.addEventListener('touchstart', function () { alert('¡TOUCH FUNCIONA!'); }, { once: true });
-    document.addEventListener('DOMContentLoaded', () => {
-      alert('de verdad si funciona');
-      const MikuPlush = document.querySelector('#Miku-plush');
-      
-
-      const audioMiku = document.querySelector('#audioMiku');
-      
-
-
-      // ==========================================
-      // MIKU
-      // ==========================================
-
-      MikuPlush.addEventListener('click', () => {
-
-        console.log('CLICK EN MIKU');
-
-        audioMiku.pause();
-        audioMiku.currentTime = 0;
-
-        audioMiku.play().catch(error => {
-          console.error('Error reproduciendo Miku:', error);
-        });
-
-      });
-
-
-      console.log('Eventos de Miku y Teto registrados');
-
-    });
-
-  </script>
 
     </a-entity>
 
@@ -105,7 +71,42 @@
 
   </a-scene>
 
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
 
+    const scene = document.querySelector('a-scene');
+
+    scene.addEventListener('loaded', () => {
+
+      const MikuPlush = document.querySelector('#Miku-plush');
+      const audioMiku = document.querySelector('#audioMiku');
+
+      console.log('Miku:', MikuPlush);
+      console.log('Audio Miku:', audioMiku);
+
+      MikuPlush.addEventListener('click', () => {
+
+        console.log('CLICK EN MIKU');
+
+        audioMiku.pause();
+        audioMiku.currentTime = 0;
+
+        audioMiku.play()
+          .then(() => {
+            console.log('Audio de Miku reproduciéndose');
+          })
+          .catch(error => {
+            console.error('Error reproduciendo Miku:', error);
+          });
+
+      });
+
+      console.log('Evento de Miku registrado');
+
+    });
+
+  });
+</script>
   
 
 </body>
