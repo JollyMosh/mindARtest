@@ -102,8 +102,11 @@
         const MikuPlush = document.querySelector('#Miku-plush');
         const audioMiku = document.querySelector('#audioMiku');
 
-        console.log('Miku:', MikuPlush);
-        console.log('Audio:', audioMiku);
+        const TetoPlush = document.querySelector('#Teto-plush');
+        const audioTeto = document.querySelector('#audioTeto');
+
+        //console.log('Miku:', MikuPlush);
+        //console.log('Audio:', audioMiku);
 
 
         // ==========================================
@@ -113,6 +116,12 @@
         MikuPlush.addEventListener('model-loaded', function () {
 
           console.log('MODELO DE MIKU CARGADO');
+
+        });
+
+        TetoPlush.addEventListener('model-loaded', function () {
+
+          console.log('MODELO DE TETO CARGADO');
 
         });
 
@@ -161,26 +170,33 @@
 
           });
 
+          // Buscamos los objetos 3D de Miku
+          const objetosTeto = [];
 
-          const intersecciones =
+          TetoPlush.object3D.traverse(function (obj) {
+
+            if (obj.isMesh) {
+              objetosTeto.push(obj);
+            }
+
+          });
+
+          //Intersecciones
+
+          const interseccionesMiku =
             raycaster.intersectObjects(objetosMiku, true);
-
-
-          console.log(
-            'Objetos tocados:',
-            intersecciones.length
-          );
+          
+          const interseccionesTeto =
+            raycaster.intersectObjects(objetosMiku, true);
 
 
           // ==========================================
           // SI TOCÓ MIKU
           // ==========================================
 
-          if (intersecciones.length > 0) {
+          if (interseccionesMiku.length > 0) {
 
             alert('¡TOCASTE A MIKU!');
-
-            console.log('CLICK EN MIKU');
 
 
             audioMiku.pause();
@@ -204,6 +220,42 @@
                 );
 
               });
+
+              return;
+
+          }
+
+          // ==========================================
+          // SI TOCÓ TETO
+          // ==========================================
+
+          if (interseccionesTeto.length > 0) {
+
+            alert('¡TOCASTE A TETO!');
+
+
+            audioTeto.pause();
+
+            audioTeto.currentTime = 0;
+
+
+            audioTeto.play()
+              .then(function () {
+
+                console.log(
+                  'AUDIO DE TETO REPRODUCIÉNDOSE'
+                );
+
+              })
+              .catch(function (error) {
+
+                console.error(
+                  'ERROR REPRODUCIENDO TETO:',
+                  error
+                );
+
+              });
+
 
           }
 
